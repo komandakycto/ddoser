@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"sync"
@@ -8,17 +9,22 @@ import (
 )
 
 // processGroupsConcurrently processes groups concurrently using goroutines.
-func processGroupsConcurrently(groups [][]string, ipNumbersThreshold int, timeWindow int, urlPattern string, log *logrus.Entry) map[string]bool {
+func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbersThreshold int, timeWindow int, urlPattern string, log *logrus.Entry) map[string]bool {
 	resultCh := make(chan string, len(groups)) // Create a channel to receive the results from each group.
+	go func() {
+		<-ctx.Done()
+		log.Info("Context is done. Closing resultCh...")
+		close(resultCh)
+	}()
 
 	var wg sync.WaitGroup
 	wg.Add(len(groups))
 
 	for i, group := range groups {
-		go func(groupID int, group []string) {
+		go func(ctx context.Context, groupID int, group []string) {
 			defer wg.Done()
-			processGroup(groupID, group, resultCh, ipNumbersThreshold, timeWindow, urlPattern, log)
-		}(i+1, group)
+			processGroup(ctx, groupID, group, resultCh, ipNumbersThreshold, timeWindow, urlPattern, log)
+		}(ctx, i+1, group)
 	}
 
 	// Create a map and a mutex to store the results.
@@ -44,7 +50,7 @@ func processGroupsConcurrently(groups [][]string, ipNumbersThreshold int, timeWi
 }
 
 // processGroup is a function that processes each group.
-func processGroup(groupID int, group []string, ch chan string, ipNumbersThreshold int, timeWindow int, urlPattern string, log *logrus.Entry) {
+func processGroup(ctx context.Context, groupID int, group []string, ch chan string, ipNumbersThreshold int, timeWindow int, urlPattern string, log *logrus.Entry) {
 	log.Infof("Processing Group %d with %d elements...", groupID, len(group))
 
 	// Calculate the initial time window start time and end time.
@@ -62,6 +68,14 @@ func processGroup(groupID int, group []string, ch chan string, ipNumbersThreshol
 	)
 
 	for _, element := range group {
+		select {
+		case <-ctx.Done():
+			log.Info("Context is done. Exiting processGroup...")
+			return
+		default:
+			// Continue processing.
+		}
+
 		// Simulate some processing time
 		entry, err := parseLogLine(element)
 		if err != nil {

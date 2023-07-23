@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const TimeLayout = "02/Jan/2006:15:04:05 -0700"
+
 // LogEntry is a struct that represents a log entry.
 func parseLogLine(logLine string) (*LogEntry, error) {
 	// Regular expression to extract the required fields from the log line.

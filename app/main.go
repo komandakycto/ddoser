@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -10,8 +11,6 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/sirupsen/logrus"
 )
-
-const TimeLayout = "02/Jan/2006:15:04:05 -0700"
 
 func main() {
 	var opts Opts
@@ -32,15 +31,20 @@ func main() {
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
 
+	// app context
+	ctx := context.Background()
+
 	l.Info("Starting the application...")
 
 	// create ticker and read the file every opts.ReadIntervalSeconds seconds
 	t := time.NewTicker(time.Duration(opts.ReadIntervalSeconds) * time.Second)
+
+doneApp:
 	for {
 		select {
 		case <-t.C:
-			l.Infof("Reading file %s", opts.LogPath)
-			// read the last N lines from the file
+			l.Infof("Reading the file %s", opts.LogPath)
+			// read the last N bytes from the file
 			lines, err := readEndBytes(opts.LogPath, opts.BytesToRead, l)
 			if err != nil {
 				l.WithError(err).Errorf("Error reading file %s", opts.LogPath)
@@ -54,16 +58,18 @@ func main() {
 			// will process the lines concurrently, for this we need to split the lines into groups
 			groups := splitSliceIntoGroups(lines, opts.LinesInGroup)
 			// process the groups concurrently
-			result := processGroupsConcurrently(groups, opts.IpNumbersThreshold, opts.TimeWindow, opts.UrlPattern, l)
-
-			log.Infof("Received total: %v", result)
-
+			result := processGroupsConcurrently(ctx, groups, opts.IpNumbersThreshold, opts.TimeWindow, opts.UrlPattern, l)
 			// write the result to the output file
 			err = writeResult(result, opts.OutputPath)
+			if err != nil {
+				l.WithError(err).Errorf("Error writing to file %s", opts.OutputPath)
+				continue
+			}
 		case <-signalCh:
 			t.Stop()
+			ctx.Done()
 			l.Info("Received a signal to stop.")
-			break
+			break doneApp
 		}
 	}
 }
