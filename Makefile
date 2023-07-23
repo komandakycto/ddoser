@@ -19,11 +19,11 @@ all: build
 
 .PHONY: build
 build:
-	go build -mod=vendor -ldflags "-s -w" -o $(OUT_FILE) $(SRC_DIR)
+	go build -mod=vendor -ldflags "-s -w" -o $(OUT_FILE) ./app
 
 .PHONY: build-linux
 build-linux:
-	GOOS=linux CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w" -o $(OUT_FILE)_linux $(SRC_DIR)
+	GOOS=linux CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w" -o $(OUT_FILE)_linux ./app
 
 .PHONY: test
 test:
