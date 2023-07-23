@@ -1,26 +1,45 @@
-V := @
-OUT_DIR := ./build
-MAIN_PKG := github.com/komandakycto/ddoser
+# Makefile for ddoser application
 
-.PHONY: vendor
-vendor:
-	$(V)go mod tidy
-	$(V)go mod vendor
-	$(V)git add vendor
+APP_NAME := ddoser
+SRC_DIR := app
+OUT_DIR := bin
+COVERPROFILE := coverage.out
 
-.PHONY: test
-test: GO_TEST_FLAGS += -race -cover
-test:
-	$(V)go test -mod=vendor $(GO_TEST_FLAGS) --tags=$(GO_TEST_TAGS) ./...
+# Determine the current operating system
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	CGO_ENABLED=0
+	OUT_FILE := $(OUT_DIR)/$(APP_NAME)_linux
+else
+	OUT_FILE := $(OUT_DIR)/$(APP_NAME)
+endif
+
+.PHONY: all
+all: build
 
 .PHONY: build
 build:
-	@echo BUILDING $(OUT_DIR)/ddoser
-	$(V)go build -mod=vendor -ldflags "-s -w" -o $(OUT_DIR)/ddoser $(MAIN_PKG)/app/main.go
-	@echo DONE
+	go build -mod=vendor -ldflags "-s -w" -o $(OUT_FILE) $(SRC_DIR)
 
-.PHONY: linux
-linux: export GOOS := linux
-linux: export GOARCH := amd64
-linux: export CGO_ENABLED := 0
-linux: build
+.PHONY: build-linux
+build-linux:
+	GOOS=linux CGO_ENABLED=0 go build -mod=vendor -ldflags "-s -w" -o $(OUT_FILE)_linux $(SRC_DIR)
+
+.PHONY: test
+test:
+	go test -race -coverprofile=$(COVERPROFILE) ./$(SRC_DIR)/...
+
+.PHONY: coverage
+coverage: test
+	go tool cover -html=$(COVERPROFILE)
+
+.PHONY: vendor
+vendor:
+	go mod tidy
+	go mod vendor
+	git add vendor
+
+.PHONY: clean
+clean:
+	rm -rf $(OUT_DIR) $(COVERPROFILE)
+

@@ -33,7 +33,6 @@ func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbers
 
 	go func() {
 		for result := range resultCh {
-			log.Infof("Received result: %s", result)
 			// Use the mutex to protect the map from concurrent writes.
 			mu.Lock()
 			resultMap[result] = true

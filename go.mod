@@ -1,4 +1,4 @@
-module ddoser
+module github.com/komandakycto/ddoser
 
 go 1.20
 
