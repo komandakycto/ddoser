@@ -3,7 +3,7 @@
 APP_NAME := ddoser
 SRC_DIR := app
 OUT_DIR := bin
-COVERPROFILE := coverage.out
+COVERPROFILE := covprofile
 
 # Determine the current operating system
 UNAME_S := $(shell uname -s)
@@ -27,7 +27,7 @@ build-linux:
 
 .PHONY: test
 test:
-	go test -race -coverprofile=$(COVERPROFILE) ./$(SRC_DIR)/...
+	go test -race -covermode atomic -coverprofile=covprofile ./...
 
 .PHONY: coverage
 coverage: test
