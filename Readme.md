@@ -12,20 +12,26 @@ Ip address is marked as attacker if it has more than m requests in last t second
 
 ```
 Usage of ./ddoser:
-  -logpath string
+  --logpath string
     	Path to nginx access log
-  -readinterval int
+  --readinterval int
     	Interval in seconds to read the log file (default 60)
-  -numberlinestoread int
+  --numberlinestoread int
     	Number of bytes to read from end of the log file (default 1024)
-  -ipnumbersthreshold int
+  --ipnumbersthreshold int
     	Number of requests from an IP to be considered as a threat (default 10)
-  -timewindow int
+  --timewindow int
     	Time window in seconds to consider requests from an IP (default 60)
-  -urlpattern string
+  --urlpattern string
     	Pattern to match the URL.
-  -linesingroup int  	
+  --linesingroup int  	
         Number of lines to group together
-  -outputpath string
+  --outputpath string
     	Path to output file      
+```
+
+## How to build
+
+```
+make build
 ```
