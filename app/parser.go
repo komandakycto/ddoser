@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"time"
@@ -32,4 +33,32 @@ func parseLogLine(logLine string) (*LogEntry, error) {
 	}
 
 	return &entry, nil
+}
+
+// LogEntry is a struct that represents a log entry.
+func parseJson(logLine string) (*LogEntry, error) {
+	type LogRow struct {
+		IPAddress    string `json:"ip"`
+		RequestedURL string `json:"uri"`
+		Timestamp    string `json:"time"`
+		UserAgent    string `json:"user_agent"`
+	}
+
+	var logEntry LogRow
+	err := json.Unmarshal([]byte(logLine), &logEntry)
+	if err != nil {
+		return nil, err
+	}
+
+	timestamp, err := time.Parse(time.RFC3339, logEntry.Timestamp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LogEntry{
+		IPAddress:    logEntry.IPAddress,
+		RequestedURL: logEntry.RequestedURL,
+		Timestamp:    timestamp,
+		UserAgent:    logEntry.UserAgent,
+	}, nil
 }

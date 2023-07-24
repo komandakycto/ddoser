@@ -10,4 +10,5 @@ type Opts struct {
 	UrlPattern          string `long:"urlpattern" env:"DDOSER_URL_PATTERN" default:"/" description:"Pattern to match the URL"`
 	LinesInGroup        int    `long:"linesingroup" env:"DDOSER_LINES_IN_GROUP" default:"100" description:"Number of lines to group together"`
 	OutputPath          string `long:"outputpath" env:"DDOSER_OUTPUT_PATH" description:"Path to output file"`
+	JsonLogFormat       bool   `long:"jsonlogformat" env:"DDOSER_JSON_LOG_FORMAT" description:"Use JSON log format"`
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // processGroupsConcurrently processes groups concurrently using goroutines.
-func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbersThreshold int, timeWindow int, urlPattern string, log *logrus.Entry) map[string]bool {
+func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbersThreshold int, timeWindow int, urlPattern string, jsonLog bool, log *logrus.Entry) map[string]bool {
 	resultCh := make(chan string, len(groups)) // Create a channel to receive the results from each group.
 	go func() {
 		<-ctx.Done()
@@ -23,7 +23,7 @@ func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbers
 	for i, group := range groups {
 		go func(ctx context.Context, groupID int, group []string) {
 			defer wg.Done()
-			processGroup(ctx, groupID, group, resultCh, ipNumbersThreshold, timeWindow, urlPattern, log)
+			processGroup(ctx, groupID, group, resultCh, ipNumbersThreshold, timeWindow, urlPattern, jsonLog, log)
 		}(ctx, i+1, group)
 	}
 
@@ -49,11 +49,11 @@ func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbers
 }
 
 // processGroup is a function that processes each group.
-func processGroup(ctx context.Context, groupID int, group []string, ch chan string, ipNumbersThreshold int, timeWindow int, urlPattern string, log *logrus.Entry) {
+func processGroup(ctx context.Context, groupID int, group []string, ch chan string, ipNumbersThreshold int, timeWindow int, urlPattern string, jsonLog bool, log *logrus.Entry) {
 	log.Infof("Processing Group %d with %d elements...", groupID, len(group))
 
 	// Calculate the initial time window start time and end time.
-	firstEntry, err := parseLogLine(group[0])
+	firstEntry, err := parse(group[0], jsonLog)
 	if err != nil {
 		log.WithError(err).Error("Error parsing log line")
 		return
@@ -76,7 +76,7 @@ func processGroup(ctx context.Context, groupID int, group []string, ch chan stri
 		}
 
 		// Simulate some processing time
-		entry, err := parseLogLine(element)
+		entry, err := parse(element, jsonLog)
 		if err != nil {
 			log.WithError(err).WithFields(logrus.Fields{"element": element}).Error("Error parsing log line")
 			continue
@@ -87,4 +87,12 @@ func processGroup(ctx context.Context, groupID int, group []string, ch chan stri
 			ts.Add(entry.IPAddress, entry.Timestamp)
 		}
 	}
+}
+
+func parse(logLine string, jsonLog bool) (*LogEntry, error) {
+	if jsonLog {
+		return parseJson(logLine)
+	}
+
+	return parseLogLine(logLine)
 }

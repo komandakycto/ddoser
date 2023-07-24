@@ -27,7 +27,9 @@ Usage of ./ddoser:
   --linesingroup int  	
         Number of lines to group together
   --outputpath string
-    	Path to output file      
+    	Path to output file   
+  --jsonlogformat bool
+    	Is log in json format  	   
 ```
 
 ## How to build

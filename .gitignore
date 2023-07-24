@@ -3,3 +3,4 @@ data/out.txt
 build/
 /coverage.out
 /bin/
+data/access_json.log
