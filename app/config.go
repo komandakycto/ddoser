@@ -7,8 +7,9 @@ type Opts struct {
 	BytesToRead         int64  `long:"numberlinestoread" env:"DDOSER_NUMBER_LINES_TO_READ" default:"1024" description:"Number of bytes to read from end of the log file"`
 	IpNumbersThreshold  int    `long:"ipnumbersthreshold" env:"DDOSER_IP_NUMBERS_THRESHOLD" default:"10" description:"Number of requests from an IP to be considered as a threat"`
 	TimeWindow          int    `long:"timewindow" env:"DDOSER_TIME_WINDOW" default:"60" description:"Time window in seconds to consider requests from an IP"`
-	UrlPattern          string `long:"urlpattern" env:"DDOSER_URL_PATTERN" default:"/" description:"Pattern to match the URL"`
+	UrlPattern          string `long:"urlpattern" env:"DDOSER_URL_PATTERN" default:"" description:"Pattern to match the URL"`
 	LinesInGroup        int    `long:"linesingroup" env:"DDOSER_LINES_IN_GROUP" default:"100" description:"Number of lines to group together"`
 	OutputPath          string `long:"outputpath" env:"DDOSER_OUTPUT_PATH" description:"Path to output file"`
 	JsonLogFormat       bool   `long:"jsonlogformat" env:"DDOSER_JSON_LOG_FORMAT" description:"Use JSON log format"`
+	OutputOverwrite     bool   `long:"outputoverwrite" env:"DDOSER_OUTPUT_OVERWRITE" description:"Overwrite the output file. Append by default."`
 }

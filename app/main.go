@@ -60,7 +60,7 @@ doneApp:
 			// process the groups concurrently
 			result := processGroupsConcurrently(ctx, groups, opts.IpNumbersThreshold, opts.TimeWindow, opts.UrlPattern, opts.JsonLogFormat, l)
 			// write the result to the output file
-			err = writeResult(result, opts.OutputPath)
+			err = writeResult(result, opts.OutputPath, opts.OutputOverwrite)
 			if err != nil {
 				l.WithError(err).Errorf("Error writing to file %s", opts.OutputPath)
 				continue
@@ -74,17 +74,22 @@ doneApp:
 	}
 }
 
-func writeResult(data map[string]bool, filePath string) error {
+func writeResult(data map[string]bool, filePath string, overwrite bool) error {
 	// Open the file with write-only and create/truncate options (to overwrite existing file or create a new one).
-	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	var file *os.File
+	var err error
+
+	if overwrite {
+		file, err = os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	} else {
+		file, err = os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	}
+
 	if err != nil {
 		return fmt.Errorf("failed to open the file: %v", err)
 	}
 	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-
-		}
+		_ = file.Close()
 	}(file)
 
 	// Write each element of the slice to the file (one element per line).

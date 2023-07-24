@@ -15,25 +15,33 @@ Usage of ./ddoser:
   --logpath string
     	Path to nginx access log
   --readinterval int
-    	Interval in seconds to read the log file (default 60)
+    	Interval in seconds to read the log file (default: 60)
   --numberlinestoread int
-    	Number of bytes to read from end of the log file (default 1024)
+    	Number of bytes to read from end of the log file (default: 1024)
   --ipnumbersthreshold int
-    	Number of requests from an IP to be considered as a threat (default 10)
+    	Number of requests from an IP to be considered as a threat (default: 10)
   --timewindow int
-    	Time window in seconds to consider requests from an IP (default 60)
+    	Time window in seconds to consider requests from an IP (default: 60)
   --urlpattern string
-    	Pattern to match the URL.
+    	Pattern to match the URL. (default: all allowed)
   --linesingroup int  	
-        Number of lines to group together
+        Number of lines to group together (default: 100) 
   --outputpath string
     	Path to output file   
   --jsonlogformat bool
-    	Is log in json format  	   
+    	Is log in json format (default: false) 
+  --outputoverwrite bool
+    	Overwrite output file (default: false)   
 ```
 
 ## How to build
 
 ```
 make build
+```
+
+## How to run
+
+```
+./ddoser --logpath=/var/log/nginx/access.log --readinterval=60 --numberlinestoread=1024 --ipnumbersthreshold=10 --timewindow=60 --urlpattern=/api/v1/health --linesingroup=100 --outputpath=/tmp/ddoser.txt --jsonlogformat --outputoverwrite
 ```
