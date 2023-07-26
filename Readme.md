@@ -32,6 +32,8 @@ Usage of ./ddoser:
     	Is log in json format (default: false) 
   --outputoverwrite bool
     	Overwrite output file (default: false)   
+  --DDOSER_ONLY_IPV4 bool
+    	Only IPv4 addresses (default: false)  	
 ```
 
 ## How to build

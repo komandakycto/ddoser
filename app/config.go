@@ -12,4 +12,5 @@ type Opts struct {
 	OutputPath          string `long:"outputpath" env:"DDOSER_OUTPUT_PATH" description:"Path to output file"`
 	JsonLogFormat       bool   `long:"jsonlogformat" env:"DDOSER_JSON_LOG_FORMAT" description:"Use JSON log format"`
 	OutputOverwrite     bool   `long:"outputoverwrite" env:"DDOSER_OUTPUT_OVERWRITE" description:"Overwrite the output file. Append by default."`
+	OnlyIpv4            bool   `long:"onlyipv4" env:"DDOSER_ONLY_IPV4" description:"Only process IPv4 addresses"`
 }

@@ -58,7 +58,7 @@ doneApp:
 			// will process the lines concurrently, for this we need to split the lines into groups
 			groups := splitSliceIntoGroups(lines, opts.LinesInGroup)
 			// process the groups concurrently
-			result := processGroupsConcurrently(ctx, groups, opts.IpNumbersThreshold, opts.TimeWindow, opts.UrlPattern, opts.JsonLogFormat, l)
+			result := processGroupsConcurrently(ctx, groups, opts.IpNumbersThreshold, opts.TimeWindow, opts.UrlPattern, opts.JsonLogFormat, opts.OnlyIpv4, l)
 			// write the result to the output file
 			err = writeResult(result, opts.OutputPath, opts.OutputOverwrite)
 			if err != nil {

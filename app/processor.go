@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"github.com/sirupsen/logrus"
+	"net"
 	"strings"
 	"sync"
 	"time"
 )
 
 // processGroupsConcurrently processes groups concurrently using goroutines.
-func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbersThreshold int, timeWindow int, urlPattern string, jsonLog bool, log *logrus.Entry) map[string]bool {
+func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbersThreshold int, timeWindow int, urlPattern string, jsonLog bool, onlyIPv4 bool, log *logrus.Entry) map[string]bool {
 	resultCh := make(chan string, len(groups)) // Create a channel to receive the results from each group.
 	go func() {
 		<-ctx.Done()
@@ -34,6 +35,10 @@ func processGroupsConcurrently(ctx context.Context, groups [][]string, ipNumbers
 	go func() {
 		for result := range resultCh {
 			// Use the mutex to protect the map from concurrent writes.
+			if onlyIPv4 && !isIPv4(result) {
+				continue
+			}
+
 			mu.Lock()
 			resultMap[result] = true
 			mu.Unlock()
@@ -95,4 +100,9 @@ func parse(logLine string, jsonLog bool) (*LogEntry, error) {
 	}
 
 	return parseLogLine(logLine)
+}
+
+func isIPv4(address string) bool {
+	ip := net.ParseIP(address)
+	return ip != nil && ip.To4() != nil
 }
