@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"github.com/komandakycto/ddoser/app/entities"
+	"github.com/komandakycto/ddoser/app/parser"
+	"github.com/komandakycto/ddoser/app/types"
 	"github.com/sirupsen/logrus"
 	"net"
 	"strings"
@@ -64,11 +67,11 @@ func processGroup(ctx context.Context, groupID int, group []string, ch chan stri
 		return
 	}
 
-	ts := NewTimeSeriesIpDuplicates(
+	ts := types.NewTimeSeriesIpDuplicates(
 		firstEntry.Timestamp,
-		ch,
 		time.Duration(timeWindow)*time.Second,
 		ipNumbersThreshold,
+		ch,
 	)
 
 	for _, element := range group {
@@ -94,12 +97,12 @@ func processGroup(ctx context.Context, groupID int, group []string, ch chan stri
 	}
 }
 
-func parse(logLine string, jsonLog bool) (*LogEntry, error) {
+func parse(logLine string, jsonLog bool) (*entities.LogEntry, error) {
 	if jsonLog {
-		return parseJson(logLine)
+		return parser.parseJson(logLine)
 	}
 
-	return parseLogLine(logLine)
+	return parser.parseLogLine(logLine)
 }
 
 func isIPv4(address string) bool {

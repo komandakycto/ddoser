@@ -1,4 +1,4 @@
-package main
+package types
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 
 func TestTimeSeriesIpDuplicates_Add_DuplicateWithinSlot(t *testing.T) {
 	duplicatesChan := make(chan string, 1)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.1", time.Now())
@@ -25,7 +25,7 @@ func TestTimeSeriesIpDuplicates_Add_DuplicateWithinSlot(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_DuplicateAfterSlot(t *testing.T) {
 	duplicatesChan := make(chan string, 1)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.1", time.Now().Add(15*time.Second))
@@ -41,7 +41,7 @@ func TestTimeSeriesIpDuplicates_Add_DuplicateAfterSlot(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_ExceedThreshold(t *testing.T) {
 	duplicatesChan := make(chan string, 1)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.2", time.Now())
@@ -60,7 +60,7 @@ func TestTimeSeriesIpDuplicates_Add_ExceedThreshold(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_NoDuplicate(t *testing.T) {
 	duplicatesChan := make(chan string)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.3", time.Now())
@@ -75,19 +75,18 @@ func TestTimeSeriesIpDuplicates_Add_NoDuplicate(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_MultipleSlots(t *testing.T) {
 	duplicatesChan := make(chan string, 2)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	nowTime := time.Now()
+	timeAfter20Seconds := nowTime.Add(20 * time.Second)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	// Add duplicates within the first time slot.
-	ts.Add("192.168.0.1", time.Now())
-	ts.Add("192.168.0.1", time.Now().Add(5*time.Second))
-
-	// Sleep for 11 seconds to create a new time slot.
-	time.Sleep(11 * time.Second)
+	ts.Add("192.168.0.1", nowTime)
+	ts.Add("192.168.0.1", nowTime.Add(5*time.Second))
 
 	// Add duplicates within the second time slot.
-	ts.Add("192.168.0.1", time.Now())
-	ts.Add("192.168.0.1", time.Now().Add(5*time.Second))
+	ts.Add("192.168.0.1", timeAfter20Seconds)
+	ts.Add("192.168.0.1", timeAfter20Seconds.Add(5*time.Second))
 
 	select {
 	case duplicateIP := <-duplicatesChan:
@@ -101,7 +100,7 @@ func TestTimeSeriesIpDuplicates_Add_MultipleSlots(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_DifferentIPs(t *testing.T) {
 	duplicatesChan := make(chan string)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.1", time.Now())
@@ -118,7 +117,7 @@ func TestTimeSeriesIpDuplicates_Add_DifferentIPs(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_DifferentThreshold(t *testing.T) {
 	duplicatesChan := make(chan string)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 3)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 3, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.1", time.Now())
@@ -135,7 +134,7 @@ func TestTimeSeriesIpDuplicates_Add_DifferentThreshold(t *testing.T) {
 
 func TestTimeSeriesIpDuplicates_Add_DuplicateAfterThreshold(t *testing.T) {
 	duplicatesChan := make(chan string, 1)
-	ts := NewTimeSeriesIpDuplicates(time.Now(), duplicatesChan, 10*time.Second, 2)
+	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
 
 	ts.Add("192.168.0.1", time.Now())
