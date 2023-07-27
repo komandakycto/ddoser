@@ -6,6 +6,8 @@ import (
 )
 
 func TestTimeSeriesIpDuplicates_Add_DuplicateWithinSlot(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string, 1)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
@@ -24,6 +26,8 @@ func TestTimeSeriesIpDuplicates_Add_DuplicateWithinSlot(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_DuplicateAfterSlot(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string, 1)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
@@ -40,6 +44,8 @@ func TestTimeSeriesIpDuplicates_Add_DuplicateAfterSlot(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_ExceedThreshold(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string, 1)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
@@ -59,6 +65,8 @@ func TestTimeSeriesIpDuplicates_Add_ExceedThreshold(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_NoDuplicate(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
@@ -74,6 +82,8 @@ func TestTimeSeriesIpDuplicates_Add_NoDuplicate(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_MultipleSlots(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string, 2)
 	nowTime := time.Now()
 	timeAfter20Seconds := nowTime.Add(20 * time.Second)
@@ -99,6 +109,8 @@ func TestTimeSeriesIpDuplicates_Add_MultipleSlots(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_DifferentIPs(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)
@@ -116,6 +128,8 @@ func TestTimeSeriesIpDuplicates_Add_DifferentIPs(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_DifferentThreshold(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 3, duplicatesChan)
 	defer close(duplicatesChan)
@@ -133,6 +147,8 @@ func TestTimeSeriesIpDuplicates_Add_DifferentThreshold(t *testing.T) {
 }
 
 func TestTimeSeriesIpDuplicates_Add_DuplicateAfterThreshold(t *testing.T) {
+	t.Parallel()
+
 	duplicatesChan := make(chan string, 1)
 	ts := NewTimeSeriesIpDuplicates(time.Now(), 10*time.Second, 2, duplicatesChan)
 	defer close(duplicatesChan)

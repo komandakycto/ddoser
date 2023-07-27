@@ -2,8 +2,8 @@ package types
 
 import "time"
 
-// TimeSeriesIpDuplicates is a data structure that stores the count of IP addresses.
-// The main aim of this data structure is to detect duplicate IP addresses within a time slot.
+// TimeSeriesIpDuplicates is a data structure designed to store the count of IP addresses.
+// Its primary purpose is to detect duplicate IP addresses within a given time slot.
 type TimeSeriesIpDuplicates struct {
 	startTimestamp time.Time
 	counter        map[string]int
@@ -15,9 +15,9 @@ type TimeSeriesIpDuplicates struct {
 // NewTimeSeriesIpDuplicates initializes and returns a new TimeSeriesIpDuplicates data structure.
 func NewTimeSeriesIpDuplicates(startTimestamp time.Time, duration time.Duration, threshold int, duplicatesChan chan string) *TimeSeriesIpDuplicates {
 	return &TimeSeriesIpDuplicates{
-		// initialize the start timestamp for time series logs.
-		// This is used to determine the current time slot and the next time slots.
-		// In general, the start timestamp is the timestamp of the first log entry.
+		// Initialize the start timestamp for time series logs.
+		// This timestamp is utilized to determine the current time slot and the subsequent time slots.
+		// Typically, the start timestamp corresponds to the timestamp of the first log entry.
 		startTimestamp: startTimestamp,
 		// initialize the map to store the count of IP addresses.
 		counter: make(map[string]int),

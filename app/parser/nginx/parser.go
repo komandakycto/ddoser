@@ -8,19 +8,62 @@ import (
 	"time"
 )
 
+// DefaultTimeLayout is the default layout of the timestamp in the nginx log.
 const DefaultTimeLayout = "02/Jan/2006:15:04:05 -0700"
 
-type NginxParser struct {
+// logRow is an inner struct that represents a log row in json format.
+// Use default json field names.
+type logRow struct {
+	IPAddress    string `json:"ip"`
+	RequestedURL string `json:"uri"`
+	Timestamp    string `json:"time"`
+	UserAgent    string `json:"user_agent"`
 }
 
-// LogEntry is a struct that represents a log entry.
-func parseLogLine(logLine string) (*entities.LogEntry, error) {
-	// Regular expression to extract the required fields from the log line.
-	re := regexp.MustCompile(`^([\d.]+) - - \[(\d{2}/\w+/\d{4}:\d{2}:\d{2}:\d{2} \+\d{4})\] "([A-Z]+) (.+) HTTP\/\d\.\d" \d+ \d+ "(.+)" "(.+)".*$`)
+// Parser is a struct that represents a nginx parser.
+type Parser struct {
+	// isDefaultFormat nginx log in default format or json.
+	isDefaultFormat bool
+	// defaultRegex precompiled regex for parsing default nginx log.
+	defaultRegex *regexp.Regexp
+	// jsonTimeLayout layout for time field in json nginx log.
+	jsonTimeLayout string
+}
 
-	matches := re.FindStringSubmatch(logLine)
+// NewNginxParser is a function that creates instance of nginx parser.
+func NewNginxParser(isDefaultFormat bool, jsonTimeLayout *string) *Parser {
+	// Default time layout is RFC3339.
+	jsonTime := time.RFC3339
+	if jsonTimeLayout != nil {
+		// Use the given layout.
+		jsonTime = *jsonTimeLayout
+	}
+
+	var re *regexp.Regexp
+	if isDefaultFormat {
+		re = regexp.MustCompile(`^([\d.]+) - - \[(\d{2}/\w+/\d{4}:\d{2}:\d{2}:\d{2} \+\d{4})\] "([A-Z]+) (.+) HTTP\/\d\.\d" \d+ \d+ "(.+)" "(.+)".*$`)
+	}
+
+	return &Parser{
+		isDefaultFormat: isDefaultFormat,
+		defaultRegex:    re,
+		jsonTimeLayout:  jsonTime,
+	}
+}
+
+// Parse is a function that parses a log line.
+func (p *Parser) Parse(line string) (*entities.LogEntry, error) {
+	if p.isDefaultFormat {
+		return p.parseDefault(line)
+	}
+
+	return p.parseJson(line)
+}
+
+func (p *Parser) parseDefault(logLine string) (*entities.LogEntry, error) {
+	matches := p.defaultRegex.FindStringSubmatch(logLine)
 	if len(matches) != 7 {
-		return nil, fmt.Errorf("failed to parse log line: %s", logLine)
+		return nil, fmt.Errorf("failed to parse nginix log line: %s", logLine)
 	}
 
 	// Parse the timestamp using the given layout.
@@ -39,24 +82,16 @@ func parseLogLine(logLine string) (*entities.LogEntry, error) {
 	return &entry, nil
 }
 
-// LogEntry is a struct that represents a log entry.
-func parseJson(logLine string) (*entities.LogEntry, error) {
-	type LogRow struct {
-		IPAddress    string `json:"ip"`
-		RequestedURL string `json:"uri"`
-		Timestamp    string `json:"time"`
-		UserAgent    string `json:"user_agent"`
-	}
-
-	var logEntry LogRow
+func (p *Parser) parseJson(logLine string) (*entities.LogEntry, error) {
+	var logEntry logRow
 	err := json.Unmarshal([]byte(logLine), &logEntry)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal json: %v", err)
 	}
 
-	timestamp, err := time.Parse(time.RFC3339, logEntry.Timestamp)
+	timestamp, err := time.Parse(p.jsonTimeLayout, logEntry.Timestamp)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse timestamp: %v", err)
 	}
 
 	return &entities.LogEntry{
