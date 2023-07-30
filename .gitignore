@@ -1,8 +1,4 @@
-.idea
-data/out.txt
-build/
+.idea/
+bin/
 /coverage.out
-/bin/
-data/access_json.log
 /covprofile
-/data/access_log_json_ipv6.log

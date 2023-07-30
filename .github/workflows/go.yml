@@ -5,32 +5,42 @@ name: build
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+    tags:
+    paths:
+      - "!**.md"
   pull_request:
-    branches: [ "master" ]
+    types: [ opened, reopened ]
+    paths:
+      - "!**.md"
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.20'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
 
-    - name: Build
-      run: make build
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          working-directory: ddoser
 
-    - name: Test
-      run: make test
-      
-    - name: Install goveralls
-      run: go install github.com/mattn/goveralls@latest
-      
-    - name: Send coverage
-      env:
-        COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: goveralls -coverprofile=covprofile -service=github
+      - name: Test
+        run: make test
+
+      - name: Build
+        run: make build
+
+      - name: Install goveralls
+        run: go install github.com/mattn/goveralls@latest
+
+      - name: Send coverage
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: goveralls -coverprofile=covprofile -service=github
