@@ -115,7 +115,7 @@ func writeResult(data map[string]bool, filePath string, overwrite bool) error {
 	}(file)
 
 	// Write each element of the slice to the file (one element per line).
-	for ip, _ := range data {
+	for ip := range data {
 		_, err := fmt.Fprintln(file, ip)
 		if err != nil {
 			return fmt.Errorf("failed to write to the file: %v", err)
