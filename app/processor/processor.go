@@ -45,13 +45,15 @@ func NewIPAnalysis(threshold int, timeWindow int, url string, parser parser.Line
 // It returns a map of IPs that exceed the threshold.
 func (a *IPAnalysis) Process(ctx context.Context, groups [][]string) (map[string]bool, error) {
 	resultCh := make(chan string, len(groups)) // Create a channel to receive the results from each group.
-	defer func() {
-		close(resultCh)
-	}()
 
-	var wg sync.WaitGroup
+	var (
+		// Create a wait group to wait for all the goroutines to finish.
+		wg sync.WaitGroup
+		// Create a wait group to wait for the collector goroutine to finish.
+		collectorWg sync.WaitGroup
+	)
+
 	wg.Add(len(groups))
-
 	for i, group := range groups {
 		go func(ctx context.Context, groupID int, group []string) {
 			defer wg.Done()
@@ -63,7 +65,11 @@ func (a *IPAnalysis) Process(ctx context.Context, groups [][]string) (map[string
 	resultMap := make(map[string]bool)
 	var mu sync.Mutex
 
+	// Create a goroutine to receive the results from the channel and store them in the map.
+	collectorWg.Add(1)
 	go func() {
+		defer collectorWg.Done()
+
 		for result := range resultCh {
 			// Use the mutex to protect the map from concurrent writes.
 			if a.onlyIPv4 && !helpers.IsIPv4(result) {
@@ -76,7 +82,12 @@ func (a *IPAnalysis) Process(ctx context.Context, groups [][]string) (map[string
 		}
 	}()
 
+	// Wait for all the goroutines to finish.
 	wg.Wait()
+	close(resultCh)
+
+	// Wait for the collector goroutine to finish.
+	collectorWg.Wait()
 
 	a.logger.Info("Finished processing all groups.")
 
