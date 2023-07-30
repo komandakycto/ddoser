@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/komandakycto/ddoser/ddoser/entities"
-	"github.com/komandakycto/ddoser/ddoser/parser/nginx"
+	"github.com/komandakycto/ddoser/app/entities"
+	"github.com/komandakycto/ddoser/app/parser/nginx"
 )
 
 func TestParseDefaultFormat(t *testing.T) {

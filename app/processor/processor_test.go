@@ -2,8 +2,8 @@ package processor_test
 
 import (
 	"context"
-	"github.com/komandakycto/ddoser/ddoser/parser/nginx"
-	"github.com/komandakycto/ddoser/ddoser/processor"
+	"github.com/komandakycto/ddoser/app/parser/nginx"
+	"github.com/komandakycto/ddoser/app/processor"
 	"github.com/sirupsen/logrus"
 	"testing"
 	"time"

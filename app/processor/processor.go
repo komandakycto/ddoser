@@ -8,9 +8,9 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/komandakycto/ddoser/ddoser/helpers"
-	"github.com/komandakycto/ddoser/ddoser/parser"
-	"github.com/komandakycto/ddoser/ddoser/types"
+	"github.com/komandakycto/ddoser/app/helpers"
+	"github.com/komandakycto/ddoser/app/parser"
+	"github.com/komandakycto/ddoser/app/types"
 )
 
 // IPAnalysis is the struct that analyzes the log entries and finds the IPs that exceed the threshold.

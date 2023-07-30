@@ -1,7 +1,7 @@
 package helpers_test
 
 import (
-	"github.com/komandakycto/ddoser/ddoser/helpers"
+	"github.com/komandakycto/ddoser/app/helpers"
 	"testing"
 
 	"github.com/stretchr/testify/require"

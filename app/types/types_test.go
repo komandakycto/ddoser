@@ -1,7 +1,7 @@
 package types_test
 
 import (
-	"github.com/komandakycto/ddoser/ddoser/types"
+	"github.com/komandakycto/ddoser/app/types"
 	"testing"
 	"time"
 )

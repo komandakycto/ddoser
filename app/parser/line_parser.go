@@ -1,6 +1,6 @@
 package parser
 
-import "github.com/komandakycto/ddoser/ddoser/entities"
+import "github.com/komandakycto/ddoser/app/entities"
 
 // LineParser is the interface that any log provider must implement.
 type LineParser interface {

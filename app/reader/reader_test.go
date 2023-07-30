@@ -1,7 +1,7 @@
 package reader_test
 
 import (
-	"github.com/komandakycto/ddoser/ddoser/reader"
+	"github.com/komandakycto/ddoser/app/reader"
 	"testing"
 
 	"github.com/stretchr/testify/require"

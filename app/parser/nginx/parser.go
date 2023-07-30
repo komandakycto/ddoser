@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/komandakycto/ddoser/ddoser/entities"
+	"github.com/komandakycto/ddoser/app/entities"
 )
 
 // DefaultTimeLayout is the default layout of the timestamp in the nginx log.

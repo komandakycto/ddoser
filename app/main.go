@@ -12,10 +12,10 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/sirupsen/logrus"
 
-	"github.com/komandakycto/ddoser/ddoser/helpers"
-	"github.com/komandakycto/ddoser/ddoser/parser/nginx"
-	"github.com/komandakycto/ddoser/ddoser/processor"
-	"github.com/komandakycto/ddoser/ddoser/reader"
+	"github.com/komandakycto/ddoser/app/helpers"
+	"github.com/komandakycto/ddoser/app/parser/nginx"
+	"github.com/komandakycto/ddoser/app/processor"
+	"github.com/komandakycto/ddoser/app/reader"
 )
 
 func main() {
