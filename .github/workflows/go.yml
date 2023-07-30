@@ -10,7 +10,7 @@ on:
     paths:
       - "!**.md"
   pull_request:
-    types: [ opened, reopened ]
+    types: [opened, reopened]
     paths:
       - "!**.md"
 
