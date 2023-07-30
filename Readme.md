@@ -1,4 +1,4 @@
-# DDoser [![Build Status](https://github.com/komandakycto/ddoser/workflows/build/badge.svg)](https://github.com/komandakycto/ddoser/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/komandakycto/ddoser)](https://goreportcard.com/report/github.com/komandakycto/ddoser) [![Coverage Status](https://coveralls.io/repos/github/komandakycto/ddoser/badge.svg)](https://coveralls.io/github/komandakycto/ddoser)
+# DDoser [![Build Status](https://github.com/komandakycto/ddoser/workflows/build/badge.svg)](https://github.com/komandakycto/ddoser/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/komandakycto/ddoser)](https://goreportcard.com/report/github.com/komandakycto/ddoser) [![Coverage Status](https://coveralls.io/repos/github/komandakycto/ddoser/badge.svg?branch=master)](https://coveralls.io/github/komandakycto/ddoser?branch=master)
 
 `DDoser` is a simple tool to find attackers IP addresses in an access log if you under DDoS attack.
 
