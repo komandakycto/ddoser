@@ -5,14 +5,9 @@ name: build
 
 on:
   push:
-    branches:
-    tags:
-    paths:
-      - "!**.md"
+    branches: [ "master" ]
   pull_request:
-    types: [ opened, reopened ]
-    paths:
-      - "!**.md"
+    branches: [ "master" ]
 
 jobs:
   build:
