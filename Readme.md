@@ -11,6 +11,8 @@ By default `DDoser` supports nginx access log format.
 The DDoser reads `k bytes` from the end of log file each `n seconds`. After this it parses the log and finds IP
 addresses of attackers.
 Ip address is marked as attacker if it has more than `m` requests in last `t` seconds.
+ 
+Results are written to the output file. After this the output file can be used to block attackers IP addresses, for example by Firewall.
 
 ## Use cases
 
@@ -48,7 +50,7 @@ Usage of ./ddoser:
     	Is log in json format (default: false) 
   --outputoverwrite bool
     	Overwrite output file (default: false)   
-  --DDOSER_ONLY_IPV4 bool
+  --onlyipv4 bool
     	Only IPv4 addresses (default: false)  	
 ```
 
