@@ -29,6 +29,10 @@ build-linux:
 test:
 	go test -race -covermode atomic -coverprofile=covprofile ./...
 
+.PHONY: docker-lint
+docker-lint:
+	docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.53.3 golangci-lint run -v
+
 .PHONY: coverage
 coverage: test
 	go tool cover -html=$(COVERPROFILE)
