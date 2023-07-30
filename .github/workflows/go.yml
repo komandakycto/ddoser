@@ -3,16 +3,7 @@
 
 name: build
 
-on:
-  push:
-    branches:
-    tags:
-    paths:
-      - "!**.md"
-  pull_request:
-    types: [opened, reopened]
-    paths:
-      - "!**.md"
+on: [push]
 
 jobs:
   build:
